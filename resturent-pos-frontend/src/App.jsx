@@ -9,6 +9,13 @@ import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import AdminQRPanel from "./components/AdminQRPanel";
 import AdminMenuManager from "./components/AdminMenuManager";
+import AdminDashboard from "./components/AdminDashboard";
+import QRMenuPage from "./components/QRMenuPage";
+import StaffRegister from "./components/StaffRegister";
+import StaffLogin from "./components/StaffLogin";
+import ProtectedRoute from "./components/ProtectedRoute";
+import KDSDashboard from "./components/KDSDashboard";
+import CahierDashboard from "./components/CahierDashboard";
 
 function App() {
 	return (
@@ -18,8 +25,25 @@ function App() {
 					<Navbar />
 					<Routes>
 						<Route path="/" element={<Home />} />
-						<Route path="/admin/tables" element={<AdminQRPanel />} />
-						<Route path="/admin/menu" element={<AdminMenuManager />} />
+						<Route path="/table/:tableId" element={<QRMenuPage />} />
+
+						{/* Protected Admin Routes */}
+						<Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
+							<Route
+								path="/admin"
+								element={<AdminDashboard blurred={false} />}
+							/>
+							<Route path="/admin/tables" element={<AdminQRPanel />} />
+							<Route path="/admin/menu" element={<AdminMenuManager />} />
+							<Route
+								path="/admin/register-staff"
+								element={<StaffRegister />}
+							/>
+						</Route>
+
+						<Route path="/admin/staff-login" element={<StaffLogin />} />
+						<Route path="/kitchen" element={<KDSDashboard />} />
+						<Route path="/cashier" element={<CahierDashboard />} />
 					</Routes>
 					<Footer />
 				</Router>
