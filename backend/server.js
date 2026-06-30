@@ -8,6 +8,7 @@ import orderRoutes from "./routes/order.js";
 import tableRoutes from "./routes/table.js";
 import billRoutes from "./routes/bill.js";
 import menuRoutes from "./routes/menu.js";
+import authRoutes from "./routes/auth.js";
 
 dotenv.config();
 connectToMongo();
@@ -56,6 +57,7 @@ app.use("/api/tables", tableRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/bills", billRoutes);
 app.use("/api/menu", menuRoutes);
+app.use("/api/auth", authRoutes);
 
 app.get("/", (req, res) => {
 	res.send("API running");
