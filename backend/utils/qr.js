@@ -1,21 +1,22 @@
 import crypto from "crypto";
 
-const SECRET_KEY = process.env.SECRET_KEY;
-const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+const getSecretKey = () => process.env.SECRET_KEY;
+const getFrontendUrl = () =>
+	process.env.FRONTEND_URL || "http://localhost:5173";
 
-//generate sequre url for table
+//generate secure url for table
 function generateSecureTableUrl(tableId) {
-	const hmac = crypto.createHmac("sha256", SECRET_KEY);
+	const hmac = crypto.createHmac("sha256", getSecretKey());
 	hmac.update(tableId);
 	const signature = hmac.digest("hex");
 
-	return `${FRONTEND_URL}/table/${tableId}?sig=${signature}`;
+	return `${getFrontendUrl()}/table/${tableId}?sig=${signature}`;
 }
 
 // verify incoming qr request signature
 function verifyTableSignature(tableId, signature) {
-	const hamc = crypto.createHmac("sha256", signature);
-	hamc.update(tableId);
+	const hmac = crypto.createHmac("sha256", getSecretKey());
+	hmac.update(tableId);
 	const expectedSignature = hmac.digest("hex");
 
 	return signature === expectedSignature;
