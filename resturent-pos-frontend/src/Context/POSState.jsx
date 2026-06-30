@@ -1,18 +1,74 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import io from "socket.io-client";
 import POSContext from "./POSContext";
+
+const socket = io(import.meta.env.BACKEND_URL);
 
 function POSState(props) {
 	const [tables, setTables] = useState([]);
 	const [loadingId, setLoadingId] = useState(null);
 	const [menuItem, setMenuItem] = useState([]);
+	const [verified, setVerified] = useState(false);
+	const [loading, setLoading] = useState(false);
+	const [availableMenuItem, setAvailableMenuItem] = useState([]);
+	const [tickets, setTickets] = useState([]);
+	const [activeBill, setActiveBill] = useState(null);
 
-	const host = "http://localhost:3000/api";
+	const host = "http://localhost:3000";
 
 	const fetchTables = async () => {
 		const res = await fetch("http://localhost:3000/api/tables");
 		const data = await res.json();
 		setTables(data);
 	};
+
+	useEffect(() => {
+		// 1. WebSocket Listeners
+		socket.on("table-status-updated", (updatedTable) => {
+			setTables((prev) =>
+				prev.map((t) => (t._id === updatedTable._id ? updatedTable : t)),
+			);
+		});
+
+		socket.on("order-received", (newOrder) => {
+			setTickets((prev) => [...prev, newOrder]);
+			fetchTables();
+		});
+
+		socket.on("status-changed", (updatedOrder) => {
+			setTickets((prev) => {
+				if (
+					["COMPLETED", "CANCELLED", "SERVED"].includes(
+						updatedOrder.status,
+					)
+				) {
+					return prev.filter((t) => t._id !== updatedOrder._id);
+				}
+				return prev.map((t) =>
+					t._id === updatedOrder._id ? updatedOrder : t,
+				);
+			});
+			fetchTables();
+		});
+
+		socket.on("bill-generated", (bill) => {
+			setActiveBill(bill);
+			fetchTables();
+		});
+
+		socket.on("payment-completed", () => {
+			setActiveBill(null);
+			fetchTables();
+		});
+
+		return () => {
+			socket.off("table-status-updated");
+			socket.off("order-received");
+			socket.off("status-changed");
+			socket.off("bill-generated");
+			socket.off("payment-completed");
+		};
+	}, []);
 
 	const createTable = async (newTable) => {
 		try {
@@ -77,9 +133,15 @@ function POSState(props) {
 	};
 
 	const fetchMenuItems = async () => {
-		const response = await fetch(`${host}/menu`);
+		const response = await fetch(`${host}/api/menu`);
 		const data = await response.json();
 		setMenuItem(data);
+	};
+
+	const fetchAvailableMenuItems = async () => {
+		const response = await fetch(`${host}/api/menu/available`);
+		const data = await response.json();
+		setAvailableMenuItem(data);
 	};
 
 	const addMenuItem = async (form, imageFile) => {
@@ -94,7 +156,7 @@ function POSState(props) {
 		}
 
 		try {
-			const response = await fetch(`${host}/menu/add`, {
+			const response = await fetch(`${host}/api/menu/add`, {
 				method: "POST",
 				body: formData,
 			});
@@ -128,7 +190,7 @@ function POSState(props) {
 
 	const toggleAvailability = async (id, currStatus) => {
 		try {
-			const response = await fetch(`${host}/menu/${id}/availability`, {
+			const response = await fetch(`${host}/api/menu/${id}/availability`, {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ isAvailable: !currStatus }),
@@ -143,12 +205,142 @@ function POSState(props) {
 		}
 	};
 
+	const verifyCustomerSession = async (tableId, signature) => {
+		setLoading(false);
+		try {
+			const response = await fetch(`${host}/api/auth/customer-session`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ tableId, signature }),
+			});
+
+			const data = await response.json();
+
+			if (data.token) {
+				localStorage.setItem("token", data.token);
+				localStorage.setItem("role", "CUSTOMER");
+				localStorage.setItem("tableId", tableId);
+				setVerified(true);
+				return {
+					success: true,
+					data: data,
+				};
+			}
+
+			return {
+				success: false,
+				data: data.error || "Invalid QR signature",
+			};
+		} catch (error) {
+			setLoading(false);
+			return {
+				success: false,
+				message: error.message,
+			};
+		}
+	};
+
+	const placeOrder = async (cart) => {
+		const token = localStorage.getItem("token");
+		const tableId = localStorage.getItem("tableId");
+		const orderItems = cart.map((item) => ({
+			menuItemId: item._id,
+			name: item.name,
+			price: item.price,
+			quantity: 1,
+		}));
+
+		try {
+			const response = await fetch(`${host}/api/orders`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				},
+				body: JSON.stringify({ tableId, items: orderItems }),
+			});
+
+			const data = await response.json();
+			if (!response.ok) {
+				throw new Error(data.message || "Failed to place order");
+			}
+
+			return {
+				success: true,
+				data,
+			};
+		} catch (error) {
+			return {
+				success: false,
+				message: error.message,
+			};
+		}
+	};
+
+	const fetchActiveOrders = async () => {
+		const response = await fetch(`${host}/api/orders/active`);
+		const data = await response.json();
+		setTickets(data);
+	};
+
+	const updateOrderStatus = async (orderid, currentStatus, tableId) => {
+		let nextStatus = "PREPARING";
+		if (currentStatus === "PENDING") nextStatus = "CONFIRMED";
+		else if (currentStatus === "CONFIRMED") nextStatus = "PREPARING";
+		else if (currentStatus === "PREPARING") nextStatus = "READY";
+		else if (currentStatus === "READY") nextStatus = "SERVED";
+
+		const response = await fetch(`${host}/api/orders/${orderid}/status`, {
+			method: "PATCH",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ status: nextStatus }),
+		});
+
+		if (response.ok) {
+			socket.emit("update-order-status", {
+				orderid,
+				status: nextStatus,
+				tableId,
+			});
+		}
+	};
+
+	const generateBill = async (tableId) => {
+		const response = await fetch(`${host}/api/bills/generate`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ tableId, paymentMethod: "CASH" }),
+		});
+		const data = await response.json();
+		console.log(data);
+
+		setActiveBill(data);
+	};
+
+	//eslint-disable-next-line
+	const payBill = async (billId, tableId) => {
+		await fetch(`http://localhost:3000/api/bills/${billId}/pay`, {
+			method: "POST",
+		});
+		setActiveBill(null);
+		fetchTables();
+	};
+
+	const joinRoom = (roomName) => {
+		socket.emit("join-room", roomName);
+	};
+
 	return (
 		<POSContext.Provider
 			value={{
 				tables,
 				menuItem,
 				loadingId,
+				loading,
+				verified,
+				availableMenuItem,
+				tickets,
+				activeBill,
 				setTables,
 				fetchTables,
 				createTable,
@@ -156,6 +348,14 @@ function POSState(props) {
 				fetchMenuItems,
 				addMenuItem,
 				toggleAvailability,
+				verifyCustomerSession,
+				fetchAvailableMenuItems,
+				placeOrder,
+				fetchActiveOrders,
+				updateOrderStatus,
+				generateBill,
+				payBill,
+				joinRoom,
 			}}
 		>
 			{props.children}
