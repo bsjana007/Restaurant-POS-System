@@ -13,7 +13,7 @@ import AdminDashboard from "./components/AdminDashboard";
 import QRMenuPage from "./components/QRMenuPage";
 import StaffRegister from "./components/StaffRegister";
 import StaffLogin from "./components/StaffLogin";
-import ProtectedRoute from "./components/ProtectedRoute";
+import { ProtectedRoute, GuestRoute } from "./components/ProtectedRoute";
 import KDSDashboard from "./components/KDSDashboard";
 import CahierDashboard from "./components/CahierDashboard";
 
@@ -41,9 +41,25 @@ function App() {
 							/>
 						</Route>
 
-						<Route path="/admin/staff-login" element={<StaffLogin />} />
-						<Route path="/kitchen" element={<KDSDashboard />} />
-						<Route path="/cashier" element={<CahierDashboard />} />
+						<Route element={<GuestRoute />}>
+							<Route path="/staff-login" element={<StaffLogin />} />
+						</Route>
+
+						<Route
+							element={
+								<ProtectedRoute allowedRoles={["KITCHEN", "ADMIN"]} />
+							}
+						>
+							<Route path="/kitchen" element={<KDSDashboard />} />
+						</Route>
+
+						<Route
+							element={
+								<ProtectedRoute allowedRoles={["CASHIER", "ADMIN"]} />
+							}
+						>
+							<Route path="/cashier" element={<CahierDashboard />} />
+						</Route>
 					</Routes>
 					<Footer />
 				</Router>

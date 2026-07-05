@@ -1,0 +1,217 @@
+[
+	{
+		"category": "Starters",
+		"items": [
+			{
+				"name": "Veg Spring Rolls",
+				"description": "Crispy rolls stuffed with fresh vegetables.",
+				"price": 149
+			},
+			{
+				"name": "Paneer Tikka",
+				"description": "Grilled cottage cheese marinated in Indian spices.",
+				"price": 249
+			},
+			{
+				"name": "Chicken Tikka",
+				"description": "Tender chicken pieces grilled in tandoor.",
+				"price": 299
+			},
+			{
+				"name": "Crispy Corn",
+				"description": "Golden fried sweet corn tossed with spices.",
+				"price": 179
+			},
+			{
+				"name": "Chilli Chicken",
+				"description": "Spicy Indo-Chinese chicken starter.",
+				"price": 319
+			}
+		]
+	},
+	{
+		"category": "Soups",
+		"items": [
+			{
+				"name": "Tomato Soup",
+				"description": "Creamy tomato soup served hot.",
+				"price": 129
+			},
+			{
+				"name": "Sweet Corn Soup",
+				"description": "Classic sweet corn soup with vegetables.",
+				"price": 139
+			},
+			{
+				"name": "Hot & Sour Soup",
+				"description": "Spicy and tangy Indo-Chinese soup.",
+				"price": 149
+			},
+			{
+				"name": "Chicken Manchow Soup",
+				"description": "Chicken soup topped with crispy noodles.",
+				"price": 169
+			}
+		]
+	},
+	{
+		"category": "Main Course",
+		"items": [
+			{
+				"name": "Butter Chicken",
+				"description": "Creamy tomato-based chicken curry.",
+				"price": 399
+			},
+			{
+				"name": "Kadai Paneer",
+				"description": "Paneer cooked with bell peppers and spices.",
+				"price": 299
+			},
+			{
+				"name": "Dal Makhani",
+				"description": "Slow-cooked black lentils with butter.",
+				"price": 249
+			},
+			{
+				"name": "Chicken Curry",
+				"description": "Traditional Indian chicken curry.",
+				"price": 349
+			},
+			{
+				"name": "Mixed Veg Curry",
+				"description": "Seasonal vegetables cooked in rich gravy.",
+				"price": 259
+			}
+		]
+	},
+	{
+		"category": "Biryani & Rice",
+		"items": [
+			{
+				"name": "Chicken Biryani",
+				"description": "Fragrant basmati rice with chicken.",
+				"price": 349
+			},
+			{
+				"name": "Veg Biryani",
+				"description": "Aromatic rice cooked with vegetables.",
+				"price": 269
+			},
+			{
+				"name": "Jeera Rice",
+				"description": "Basmati rice tempered with cumin.",
+				"price": 159
+			},
+			{
+				"name": "Steamed Rice",
+				"description": "Plain steamed basmati rice.",
+				"price": 99
+			}
+		]
+	},
+	{
+		"category": "Breads",
+		"items": [
+			{
+				"name": "Butter Naan",
+				"description": "Soft tandoor naan with butter.",
+				"price": 55
+			},
+			{
+				"name": "Garlic Naan",
+				"description": "Naan topped with garlic and butter.",
+				"price": 69
+			},
+			{
+				"name": "Tandoori Roti",
+				"description": "Whole wheat tandoor bread.",
+				"price": 35
+			},
+			{
+				"name": "Lachha Paratha",
+				"description": "Layered flaky paratha.",
+				"price": 65
+			}
+		]
+	},
+	{
+		"category": "Chinese",
+		"items": [
+			{
+				"name": "Veg Hakka Noodles",
+				"description": "Stir-fried noodles with vegetables.",
+				"price": 229
+			},
+			{
+				"name": "Chicken Hakka Noodles",
+				"description": "Noodles tossed with chicken and vegetables.",
+				"price": 279
+			},
+			{
+				"name": "Veg Fried Rice",
+				"description": "Fried rice with vegetables.",
+				"price": 219
+			},
+			{
+				"name": "Chicken Fried Rice",
+				"description": "Fried rice with chicken and vegetables.",
+				"price": 269
+			},
+			{
+				"name": "Chicken Manchurian",
+				"description": "Chicken balls in spicy Manchurian sauce.",
+				"price": 319
+			}
+		]
+	},
+	{
+		"category": "Beverages",
+		"items": [
+			{
+				"name": "Cold Coffee",
+				"description": "Chilled coffee with ice cream.",
+				"price": 159
+			},
+			{
+				"name": "Fresh Lime Soda",
+				"description": "Refreshing sweet or salted lime soda.",
+				"price": 99
+			},
+			{
+				"name": "Mango Shake",
+				"description": "Fresh mango milkshake.",
+				"price": 149
+			},
+			{
+				"name": "Mineral Water",
+				"description": "1L bottled drinking water.",
+				"price": 30
+			}
+		]
+	},
+	{
+		"category": "Desserts",
+		"items": [
+			{
+				"name": "Gulab Jamun",
+				"description": "Soft milk dumplings in sugar syrup.",
+				"price": 99
+			},
+			{
+				"name": "Brownie with Ice Cream",
+				"description": "Chocolate brownie served with vanilla ice cream.",
+				"price": 199
+			},
+			{
+				"name": "Rasgulla",
+				"description": "Soft Bengali cottage cheese dessert.",
+				"price": 89
+			},
+			{
+				"name": "Kulfi",
+				"description": "Traditional Indian frozen dessert.",
+				"price": 99
+			}
+		]
+	}
+]

@@ -70,8 +70,8 @@ router.post("/:id/generate-qr", async (req, res) => {
 router.post("/:id/status", async (req, res) => {
 	try {
 		const { id } = req.params;
-		const status = req.body;
-		const io = router.app.get("io");
+		const { status } = req.body;
+		const io = req.app.get("io");
 
 		const updatedTable = await TableModel.findByIdAndUpdate(
 			id,

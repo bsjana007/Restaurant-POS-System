@@ -2,7 +2,7 @@ import crypto from "crypto";
 
 const getSecretKey = () => process.env.SECRET_KEY;
 const getFrontendUrl = () =>
-	process.env.FRONTEND_URL || "http://localhost:5173";
+	process.env.FRONTEND_URL || "http://10.129.14.110:5173";
 
 //generate secure url for table
 function generateSecureTableUrl(tableId) {

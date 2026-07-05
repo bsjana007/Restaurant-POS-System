@@ -86,7 +86,7 @@ function Footer() {
 				<div className="max-w-7xl mx-auto border-t border-stone-200 mt-12 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] text-stone-550 font-semibold">
 					<p>© 2026 Aetheria Bistro. All rights reserved.</p>
 					<div className="flex gap-4">
-						<Link to="/admin/staff-login" className="hover:text-amber-600">
+						<Link to="/staff-login" className="hover:text-amber-600">
 							Staff Login
 						</Link>
 						<Link to="/admin/tables" className="hover:text-amber-600">

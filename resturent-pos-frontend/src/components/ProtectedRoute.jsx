@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, Navigate, Link, useNavigate } from "react-router-dom";
 import StaffLogin from "./StaffLogin";
 import AdminDashboard from "./AdminDashboard";
 
-export default function ProtectedRoute({ allowedRoles }) {
+export function ProtectedRoute({ allowedRoles }) {
+	const navigate = useNavigate();
 	const [showLoginModal, setShowLoginModal] = useState(false);
 	const [token, setToken] = useState(localStorage.getItem("token"));
 	const [role, setRole] = useState(localStorage.getItem("role"));
@@ -16,6 +17,41 @@ export default function ProtectedRoute({ allowedRoles }) {
 	};
 
 	const isAuthorized = token && allowedRoles.includes(role);
+
+	if (role === "CUSTOMER") {
+		const tableId = localStorage.getItem("tableId");
+		return (
+			<div className="relative min-h-screen bg-slate-50 flex items-center justify-center p-6 text-stone-800 overflow-hidden">
+				{/* Ambient Light */}
+				<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-red-650/10 rounded-full blur-3xl"></div>
+
+				<div className="z-10 bg-slate-200 border border-slate-500 p-8 rounded-2xl max-w-md w-full text-center shadow-2xl space-y-6">
+					<div className="mx-auto w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center border border-red-500/20 text-red-500 text-3xl">
+						<i className="fa-solid fa-ban fa-sm text-red-800"></i>
+					</div>
+					<div className="space-y-2">
+						<h2 className="text-2xl font-bold tracking-tight text-red-500">
+							Access Denied
+						</h2>
+						<p className="text-slate-500 text-sm leading-relaxed">
+							You are not allowed to access this page. This section is
+							reserved for restaurant staff and administrators. Please
+							return to the menu to continue your dining experience.
+						</p>
+					</div>
+
+					{tableId && (
+						<Link
+							onClick={() => navigate(-1)}
+							className="block w-full py-3 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-bold rounded-xl transition duration-200 shadow-lg text-center"
+						>
+							Back to Menu
+						</Link>
+					)}
+				</div>
+			</div>
+		);
+	}
 
 	if (!isAuthorized) {
 		return (
@@ -73,6 +109,55 @@ export default function ProtectedRoute({ allowedRoles }) {
 				)}
 			</div>
 		);
+	}
+
+	return <Outlet />;
+}
+
+export function GuestRoute() {
+	const navigate = useNavigate();
+	const token = localStorage.getItem("token");
+	const role = localStorage.getItem("role");
+	const tableId = localStorage.getItem("tableId");
+
+	if (token && role === "CUSTOMER") {
+		return (
+			<div className="relative min-h-screen bg-slate-50 flex items-center justify-center p-6 text-stone-800 overflow-hidden">
+				{/* Ambient Light */}
+				<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-red-650/10 rounded-full blur-3xl"></div>
+
+				<div className="z-10 bg-slate-200 border border-slate-500 p-8 rounded-2xl max-w-md w-full text-center shadow-2xl space-y-6">
+					<div className="mx-auto w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center border border-red-500/20 text-red-500 text-3xl">
+						<i className="fa-solid fa-ban fa-sm text-red-800"></i>
+					</div>
+					<div className="space-y-2">
+						<h2 className="text-2xl font-bold tracking-tight text-red-500">
+							Access Denied
+						</h2>
+						<p className="text-slate-500 text-sm leading-relaxed">
+							You are not allowed to access this page. This section is
+							reserved for restaurant staff and administrators. Please
+							return to the menu to continue your dining experience.
+						</p>
+					</div>
+
+					{tableId && (
+						<Link
+							onClick={() => navigate(-1)}
+							className="block w-full py-3 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-bold rounded-xl transition duration-200 shadow-lg text-center"
+						>
+							Back to Menu
+						</Link>
+					)}
+				</div>
+			</div>
+		);
+	}
+
+	if (token) {
+		if (role === "KITCHEN") return <Navigate to="/kitchen" replace />;
+		if (role === "CASHIER") return <Navigate to="/cashier" replace />;
+		if (role === "ADMIN") return <Navigate to="/admin" replace />;
 	}
 
 	return <Outlet />;

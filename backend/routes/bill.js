@@ -44,7 +44,7 @@ router.post("/generate", async (req, res) => {
 
 		//notify cashier and customer devices
 		io.to("cashier").emit("bill-generated", savedBill);
-		io.to(`Table: ${tableId}`).emit("bill-recieved", savedBill);
+		io.to(`table:${tableId}`).emit("bill-received", savedBill);
 
 		res.status(200).json(savedBill);
 	} catch (error) {
@@ -52,11 +52,26 @@ router.post("/generate", async (req, res) => {
 	}
 });
 
+//get active unpaid bill for table
+router.get("/table/:tableId", async (req, res) => {
+	try {
+		const { tableId } = req.params;
+		const bill = await BillModel.findOne({ tableId, isPaid: false });
+		if (!bill)
+			return res
+				.status(404)
+				.json({ message: "No active unpaid bill found for this table" });
+		res.status(200).json(bill);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
 //process bill payment
 router.post("/:id/pay", async (req, res) => {
 	try {
 		const { id } = req.params;
-		const io = router.app.get("io");
+		const io = req.app.get("io");
 
 		const bill = await BillModel.findByIdAndUpdate(
 			id,
@@ -70,16 +85,16 @@ router.post("/:id/pay", async (req, res) => {
 		//// Update table status to DIRTY (requiring cleaning before next guest)
 		await TableModel.findByIdAndUpdate(bill.tableId, { status: "DIRTY" });
 
-		//notify cahier and table devices
+		//notify cashier and table devices
 		io.to("cashier").emit("bill-paid", { billId: id, tableId: bill.tableId });
-		io.to(`Table: ${bill.tableId}`).emit("checkout-complete");
+		io.to(`table:${bill.tableId}`).emit("checkout-complete");
 
-		res.status1(200).json({
+		res.status(200).json({
 			message: "Payment finalized successfully",
 			bill,
 		});
 	} catch (error) {
-		res.status(404).josn({ error: error.message });
+		res.status(404).json({ error: error.message });
 	}
 });
 

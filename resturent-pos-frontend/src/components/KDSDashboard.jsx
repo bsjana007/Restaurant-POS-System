@@ -9,18 +9,19 @@ function KDSDashboard() {
 	useEffect(() => {
 		joinRoom("kitchen");
 		fetchActiveOrders();
-	});
+		//eslint-disable-next-line
+	}, []);
 	const getTimerColor = (time) => {
 		const minutes = (new Date() - new Date(time)) / 60000;
-		if (minutes > 15) return "border-red-500 bg-red-950";
-		if (minutes > 10) return "border-amber-500 bg-amber-950";
-		return "border-slate-800 bg-slate-900";
+		if (minutes > 15) return "border-red-500 bg-red-700";
+		if (minutes > 10) return "border-amber-300 bg-amber-600";
+		return "border-slate-600 bg-slate-600";
 	};
 
 	return (
-		<div className="p-6 bg-slate-950 min-h-screen text-white">
-			<h1 className="text-3xl font-bold text-emerald-400 mb-6">
-				KDS Screen
+		<div className="p-6 bg-slate-50 min-h-screen text-white">
+			<h1 className="text-3xl font-bold text-stone-800 mb-6">
+				Kitchen Dashboard Screen
 			</h1>
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 				{tickets.map((ticket) => (
@@ -53,13 +54,22 @@ function KDSDashboard() {
 									ticket.tableId?._id,
 								)
 							}
-							className="w-full mt-4 bg-emerald-600 py-2 rounded font-bold hover:bg-emerald-500"
+							disabled={ticket.status === "SERVED"}
+							className={`w-full mt-4 py-2 rounded font-bold transition ${
+								ticket.status === "SERVED"
+									? "bg-gray-500 text-slate-100 cursor-not-allowed"
+									: "bg-green-600 hover:bg-green-500 cursor-pointer text-white"
+							}`}
 						>
 							{ticket.status === "PENDING"
 								? "Confirm"
 								: ticket.status === "CONFIRMED"
 									? "Cook"
-									: "Complete"}
+									: ticket.status === "PREPARING"
+										? "Complete"
+										: ticket.status === "READY"
+											? "Serve"
+											: "Served"}
 						</button>
 					</div>
 				))}

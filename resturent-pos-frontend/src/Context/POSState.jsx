@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import io from "socket.io-client";
 import POSContext from "./POSContext";
 
-const socket = io(import.meta.env.BACKEND_URL);
+//eslint-disable-next-line
+export const socket = io(import.meta.env.VITE_BACKEND_URL);
 
 function POSState(props) {
 	const [tables, setTables] = useState([]);
@@ -14,10 +15,10 @@ function POSState(props) {
 	const [tickets, setTickets] = useState([]);
 	const [activeBill, setActiveBill] = useState(null);
 
-	const host = "http://localhost:3000";
+	const host = import.meta.env.VITE_BACKEND_URL;
 
 	const fetchTables = async () => {
-		const res = await fetch("http://localhost:3000/api/tables");
+		const res = await fetch(`${host}/api/tables`);
 		const data = await res.json();
 		setTables(data);
 	};
@@ -68,6 +69,7 @@ function POSState(props) {
 			socket.off("bill-generated");
 			socket.off("payment-completed");
 		};
+		//eslint-disable-next-line
 	}, []);
 
 	const createTable = async (newTable) => {
@@ -247,7 +249,7 @@ function POSState(props) {
 			menuItemId: item._id,
 			name: item.name,
 			price: item.price,
-			quantity: 1,
+			quantity: item.quantity,
 		}));
 
 		try {
@@ -305,25 +307,56 @@ function POSState(props) {
 		}
 	};
 
-	const generateBill = async (tableId) => {
+	const generateBill = async (tableId, paymentMethod = "CASH") => {
 		const response = await fetch(`${host}/api/bills/generate`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ tableId, paymentMethod: "CASH" }),
+			body: JSON.stringify({ tableId, paymentMethod }),
 		});
 		const data = await response.json();
 		console.log(data);
 
 		setActiveBill(data);
+		return data;
+	};
+
+	const fetchActiveBill = async (tableId) => {
+		try {
+			const response = await fetch(`${host}/api/bills/table/${tableId}`);
+			if (response.ok) {
+				const data = await response.json();
+				setActiveBill(data);
+			} else {
+				setActiveBill(null);
+			}
+		} catch (error) {
+			console.error(error);
+			setActiveBill(null);
+		}
 	};
 
 	//eslint-disable-next-line
 	const payBill = async (billId, tableId) => {
-		await fetch(`http://localhost:3000/api/bills/${billId}/pay`, {
+		await fetch(`${host}/api/bills/${billId}/pay`, {
 			method: "POST",
 		});
 		setActiveBill(null);
 		fetchTables();
+	};
+
+	const updateTableStatus = async (tableId, status) => {
+		try {
+			const response = await fetch(`${host}/api/tables/${tableId}/status`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ status }),
+			});
+			if (response.ok) {
+				fetchTables();
+			}
+		} catch (error) {
+			console.error("Error updating table status:", error);
+		}
 	};
 
 	const joinRoom = (roomName) => {
@@ -355,6 +388,9 @@ function POSState(props) {
 				updateOrderStatus,
 				generateBill,
 				payBill,
+				fetchActiveBill,
+				setActiveBill,
+				updateTableStatus,
 				joinRoom,
 			}}
 		>
