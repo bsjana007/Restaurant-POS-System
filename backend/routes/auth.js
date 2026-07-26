@@ -104,4 +104,13 @@ router.post("/customer-session", (req, res) => {
 	}
 });
 
+router.get("/staff", async (req, res) => {
+	try {
+		const staff = await User.find({}, "username role");
+		res.status(200).json(staff);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
 export default router;

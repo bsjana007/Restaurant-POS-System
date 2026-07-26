@@ -11,6 +11,7 @@ import AdminQRPanel from "./components/AdminQRPanel";
 import AdminMenuManager from "./components/AdminMenuManager";
 import AdminDashboard from "./components/AdminDashboard";
 import QRMenuPage from "./components/QRMenuPage";
+import MenuPage from "./components/MenuPage";
 import StaffRegister from "./components/StaffRegister";
 import StaffLogin from "./components/StaffLogin";
 import { ProtectedRoute, GuestRoute } from "./components/ProtectedRoute";
@@ -26,6 +27,7 @@ function App() {
 					<Routes>
 						<Route path="/" element={<Home />} />
 						<Route path="/table/:tableId" element={<QRMenuPage />} />
+						<Route path="/menu" element={<MenuPage />} />
 
 						{/* Protected Admin Routes */}
 						<Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>

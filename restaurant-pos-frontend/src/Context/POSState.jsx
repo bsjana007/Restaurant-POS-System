@@ -14,6 +14,7 @@ function POSState(props) {
 	const [availableMenuItem, setAvailableMenuItem] = useState([]);
 	const [tickets, setTickets] = useState([]);
 	const [activeBill, setActiveBill] = useState(null);
+	const [staffList, setStaffList] = useState([]);
 
 	const host = import.meta.env.VITE_BACKEND_URL;
 
@@ -74,7 +75,7 @@ function POSState(props) {
 
 	const createTable = async (newTable) => {
 		try {
-			const res = await fetch("http://localhost:3000/api/tables/add", {
+			const res = await fetch(`${host}/api/tables/add`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(newTable),
@@ -108,7 +109,7 @@ function POSState(props) {
 		setLoadingId(tableId);
 		try {
 			const response = await fetch(
-				`http://localhost:3000/api/tables/${tableId}/generate-qr`,
+				`${host}/api/tables/${tableId}/generate-qr`,
 				{
 					method: "POST",
 				},
@@ -363,6 +364,22 @@ function POSState(props) {
 		socket.emit("join-room", roomName);
 	};
 
+	const fetchStaff = async () => {
+		try {
+			const token = localStorage.getItem("token");
+			const response = await fetch(`${host}/api/auth/staff`, {
+				headers: { Authorization: `Bearer ${token}` },
+			});
+
+			if (response.ok) {
+				const data = await response.json();
+				setStaffList(data);
+			}
+		} catch (error) {
+			console.error("Error fetching staff:", error);
+		}
+	};
+
 	return (
 		<POSContext.Provider
 			value={{
@@ -374,6 +391,7 @@ function POSState(props) {
 				availableMenuItem,
 				tickets,
 				activeBill,
+				staffList,
 				setTables,
 				fetchTables,
 				createTable,
@@ -392,6 +410,7 @@ function POSState(props) {
 				setActiveBill,
 				updateTableStatus,
 				joinRoom,
+				fetchStaff,
 			}}
 		>
 			{props.children}
