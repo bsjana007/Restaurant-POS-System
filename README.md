@@ -97,7 +97,7 @@ Ensure you have the following installed on your machine:
 3. Create a `.env` file in the `backend/` directory:
    ```env
    PORT=3000
-   MONGO_URI=mongodb://localhost:27017/pos-system
+   MONGO_URI=your_mongo_uri
    JWT_SECRET=your_jwt_secret_key
    QR_SECRET_KEY=your_cryptographic_qr_signing_key
    CLOUDINARY_CLOUD_NAME=your_cloudinary_name
