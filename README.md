@@ -10,7 +10,7 @@ A premium, full-stack, real-time POS (Point of Sale) and QR-code-based menu orde
 
 ---
 
-## 🚀 Key Features
+## Key Features
 
 - **Secure QR Ordering**: Cryptographically signed QR codes prevent table ID tampering.
 - **Real-Time Synchronisation**: Uses Socket.io to sync order status, KDS tickets, and billing requests instantly across all devices.
@@ -73,7 +73,7 @@ Resturent-POS/
 
 ---
 
-## 🛠️ Installation & Setup
+## Installation & Setup
 
 ### 1. Prerequisites
 
@@ -136,7 +136,7 @@ Ensure you have the following installed on your machine:
 
 ---
 
-## 💻 Technologies Used
+## Technologies Used
 
 - **Frontend**: React (Vite), React Router DOM (v6), Socket.io-client, TailwindCSS.
 - **Backend**: Node.js, Express, Mongoose, Socket.io, JWT (JSON Web Tokens), Multer & Cloudinary (for image uploads).
