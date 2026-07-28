@@ -12,12 +12,12 @@ A premium, full-stack, real-time POS (Point of Sale) and QR-code-based menu orde
 
 ## 🚀 Key Features
 
-- **🛡️ Secure QR Ordering**: Cryptographically signed QR codes prevent table ID tampering.
-- **⚡ Real-Time Synchronisation**: Uses Socket.io to sync order status, KDS tickets, and billing requests instantly across all devices.
-- **🍳 Kitchen Display System (KDS)**: Interface for chefs to view, accept, prepare, and serve orders.
-- **💵 Cashier Dashboard**: Table layout interface showing table statuses (`VACANT`, `OCCUPIED`, `BILLING`, `DIRTY`) with instant checkout, payment method selection, and invoice printing.
-- **⚙️ Admin Controls**: Manage menu items (with image uploads), generate secure QR codes for new tables, and register/manage staff accounts.
-- **🔒 Auth Guards & Route Protection**: Role-based access validation for staff (`ADMIN`, `KITCHEN`, `CASHIER`) and secure access blocks for customers (`CUSTOMER`).
+- **Secure QR Ordering**: Cryptographically signed QR codes prevent table ID tampering.
+- **Real-Time Synchronisation**: Uses Socket.io to sync order status, KDS tickets, and billing requests instantly across all devices.
+- **Kitchen Display System (KDS)**: Interface for chefs to view, accept, prepare, and serve orders.
+- **Cashier Dashboard**: Table layout interface showing table statuses (`VACANT`, `OCCUPIED`, `BILLING`, `DIRTY`) with instant checkout, payment method selection, and invoice printing.
+- **Admin Controls**: Manage menu items (with image uploads), generate secure QR codes for new tables, and register/manage staff accounts.
+- **Auth Guards & Route Protection**: Role-based access validation for staff (`ADMIN`, `KITCHEN`, `CASHIER`) and secure access blocks for customers (`CUSTOMER`).
 
 ---
 
