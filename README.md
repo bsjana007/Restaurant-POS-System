@@ -139,5 +139,5 @@ Ensure you have the following installed on your machine:
 ## Technologies Used
 
 - **Frontend**: React (Vite), React Router DOM (v6), Socket.io-client, TailwindCSS.
-- **Backend**: Node.js, Express, Mongoose, Socket.io, JWT (JSON Web Tokens), Multer & Cloudinary (for image uploads).
+- **Backend**: Node.js, Express, Mongoose, Socket.io, JWT (JSON Web Tokens),Crypto, Multer & Cloudinary (for image uploads).
 - **Database**: MongoDB.
